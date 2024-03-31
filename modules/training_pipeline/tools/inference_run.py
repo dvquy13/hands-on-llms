@@ -14,7 +14,10 @@ inference_app = App(
         image=Image(python_version="python3.10", python_packages="requirements.txt"),
     ),
     volumes=[
-        Volume(path="./qa_dataset", name="qa_dataset"),
+        Volume(
+            path="./hands_on_llms_training_pipeline_qa_dataset",
+            name="hands_on_llms_training_pipeline_qa_dataset",
+        ),
         Volume(
             path="./model_cache", name="model_cache", volume_type=VolumeType.Persistent
         ),

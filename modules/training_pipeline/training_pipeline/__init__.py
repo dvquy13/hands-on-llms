@@ -41,6 +41,9 @@ def initialize(logging_config_path: str = "logging.yaml", env_file_path: str = "
     # Set to OFFLINE to run an Offline Experiment or DISABLE to turn off logging
     os.environ["COMET_MODE"] = "ONLINE"
     # Find out more about Comet ML configuration here: https://www.comet.com/docs/v2/integrations/ml-frameworks/huggingface/#configure-comet-for-hugging-face
+    # Enable console logging to experiment output
+    # Other available env vars can be found here: https://www.comet.com/docs/v2/api-and-sdk/python-sdk/advanced/configuration/#configuration-variables
+    os.environ["COMET_AUTO_LOG_OUTPUT_LOGGER"] = "True"
 
 
 def initialize_logger(

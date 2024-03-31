@@ -4,8 +4,8 @@
 
 install:
 	@echo "Installing training pipeline..."
-	
-	poetry env use $(shell which python3.10) && \
+	conda create --prefix ./.venv python=3.10 pip
+	poetry env use ./.venv/bin/python && \
 	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install && \
 	poetry run pip install torch==2.0.1
 
@@ -31,9 +31,9 @@ export_requirements:
 	poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 upload_dataset_to_beam:
-	@echo "Pushing data to the qa_dataset volume on Beam..."
+	@echo "Pushing data to the hands_on_llms_training_pipeline_qa_dataset volume on Beam..."
 	
-	beam volume upload qa_dataset dataset
+	beam volume upload hands_on_llms_training_pipeline_qa_dataset dataset
 
 
 # === Training ===
@@ -51,12 +51,13 @@ train_local:
 dev_train_beam: export_requirements
 	@echo "Running training pipeline on Beam using the development config..."
 
-	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/dev_training_config.yaml", "output_dir": "./output", "dataset_dir": "./qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
+	@# BEAM_IGNORE_IMPORTS_OFF is a quick work-around to fix this error: https://docs.beam.cloud/resources/common-issues#invalid-app-definition-metaclass-conflict-or-import-error
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/dev_training_config.yaml", "output_dir": "./output", "dataset_dir": "./hands_on_llms_training_pipeline_qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
 
 train_beam: export_requirements
 	@echo "Running training pipeline on Beam using the production config..."
 
-	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/training_config.yaml", "output_dir": "./output", "dataset_dir": "./qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/train_run.py:train -d '{"config_file": "configs/training_config.yaml", "output_dir": "./output", "dataset_dir": "./hands_on_llms_training_pipeline_qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
 
 
 # === Inference ===
@@ -74,12 +75,12 @@ infer_local:
 dev_infer_beam: export_requirements
 	@echo "Running inference pipeline on Beam using the development config..."
 
-	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/inference_run.py:infer -d '{"config_file": "configs/dev_inference_config.yaml", "dataset_dir": "./qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/inference_run.py:infer -d '{"config_file": "configs/dev_inference_config.yaml", "dataset_dir": "./hands_on_llms_training_pipeline_qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
 
 infer_beam: export_requirements
 	@echo "Running inference pipeline on Beam using the production config..."
 
-	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/inference_run.py:infer -d '{"config_file": "configs/inference_config.yaml", "dataset_dir": "./qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
+	BEAM_IGNORE_IMPORTS_OFF=true beam run ./tools/inference_run.py:infer -d '{"config_file": "configs/inference_config.yaml", "dataset_dir": "./hands_on_llms_training_pipeline_qa_dataset/dataset", "env_file_path": ".env", "model_cache_dir": "./model_cache"}'
 
 
 # === PEP8 ===

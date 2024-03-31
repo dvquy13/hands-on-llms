@@ -66,13 +66,13 @@ cp .env.example .env
 In addition to setting up Beam, you have to go to your [Beam account](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github) and create a volume, as follows:
 1. go to the `Volumes` section
 2. click create `New Volume` (in the top right corner)
-3. choose `Volume Name = qa_dataset` and `Volume Type = Shared`
+3. choose `Volume Name = hands_on_llms_training_pipeline_qa_dataset` and `Volume Type = Shared`
 
 After, run the following command to upload the Q&A dataset to the Beam volume you created:
 ```shell
 make upload_dataset_to_beam
 ```
-Finally, check out that your [**qa_dataset** Beam volume](https://www.beam.cloud/dashboard/volumes/qa_dataset?utm_source=thepauls&utm_medium=partner&utm_content=github) contains the uploaded data. 
+Finally, check out that your [**hands_on_llms_training_pipeline_qa_dataset** Beam volume](https://www.beam.cloud/dashboard/volumes/qa_dataset?utm_source=thepauls&utm_medium=partner&utm_content=github) contains the uploaded data. 
 
 **IMPORTANT NOTE:** The training pipeline will work only on CUDA-enabled Nvidia GPUs with ~16 GB VRAM. If you don't have one and wish to run the training pipeline, you must deploy it to [Beam](https://www.beam.cloud?utm_source=thepauls&utm_medium=partner&utm_content=github). 
 
