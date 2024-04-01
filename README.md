@@ -4,6 +4,8 @@
     <i>by <a href="https://github.com/iusztinpaul">Paul Iusztin</a>, <a href="https://github.com/Paulescu">Pau Labarta Bajo</a> and <a href="https://github.com/Joywalker">Alexandru Razvant</a></i>
 </div>
 
+This is a fork from the repo https://github.com/iusztinpaul/hands-on-llms?tab=readme-ov-file
+
 ## Table of Contents
 
 - [1. Building Blocks](#1-building-blocks)
