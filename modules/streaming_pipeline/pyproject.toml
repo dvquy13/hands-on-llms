@@ -8,7 +8,6 @@ packages = [{include = "streaming_pipeline"}]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
-bytewax = "^0.16.2"
 python-dotenv = "^1.0.0"
 websocket-client = "^1.6.2"
 pydantic = ">=1.8,<2.0"
@@ -17,8 +16,14 @@ sentencepiece = "^0.1.99"
 qdrant-client = "1.1.1"
 fire = "^0.5.0"
 transformers = "^4.33.1"
-torch = {version = "2.0.1+cpu", source = "torch-cpu"}
 pyyaml = "6.0.1"
+# Originally the author's bytewax version is 0.16.2 but we got the error of "Unable to find installation candidates for bytewax=0.16.2" when poetry install in docker.
+# So we update the bytewax version to 0.19.1 and the issue gone. Still needs to understand why this happened.
+bytewax = "^0.17.2"
+torch = [
+    {platform = "darwin", url = "https://download.pytorch.org/whl/cpu/torch-2.0.1-cp310-none-macosx_11_0_arm64.whl"},
+    {platform = "linux", url = "https://download.pytorch.org/whl/cu118/torch-2.0.1%2Bcu118-cp310-cp310-linux_x86_64.whl"},
+]
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
@@ -29,11 +34,6 @@ ruff = "^0.0.285"
 name = "PyPI"
 priority = "primary"
 
-
-[[tool.poetry.source]]
-name = "torch-cpu"
-url = "https://download.pytorch.org/whl/cpu"
-priority = "supplemental"
 
 [build-system]
 requires = ["poetry-core"]

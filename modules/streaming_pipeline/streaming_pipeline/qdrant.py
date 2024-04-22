@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, List
 
 from bytewax.outputs import DynamicOutput, StatelessSink
 from qdrant_client import QdrantClient
@@ -119,11 +119,12 @@ class QdrantVectorSink(StatelessSink):
         self._client = client
         self._collection_name = collection_name
 
-    def write(self, document: Document):
-        ids, payloads = document.to_payloads()
-        points = [
-            PointStruct(id=idx, vector=vector, payload=_payload)
-            for idx, vector, _payload in zip(ids, document.embeddings, payloads)
-        ]
+    def write_batch(self, documents: List[Document]):
+        for document in documents:
+            ids, payloads = document.to_payloads()
+            points = [
+                PointStruct(id=idx, vector=vector, payload=_payload)
+                for idx, vector, _payload in zip(ids, document.embeddings, payloads)
+            ]
 
-        self._client.upsert(collection_name=self._collection_name, points=points)
+            self._client.upsert(collection_name=self._collection_name, points=points)

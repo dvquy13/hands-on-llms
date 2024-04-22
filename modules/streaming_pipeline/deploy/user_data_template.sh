@@ -31,10 +31,13 @@ echo "Sleeping for 90 seconds to allow the instance to fully initialize..."
 sleep 90
 
 # Authenticate Docker to the ECR registry.
-aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${DOCKER_IMAGE_ECR_REGISTRY_URI}
+# Below command seems to work in a different security setup than SSO
+# aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${DOCKER_IMAGE_ECR_REGISTRY_URI}
+# Below command use envsubst to populate the password
+docker login --username AWS --password ${ECR_LOGIN_PASSWORD} ${DOCKER_IMAGE_ECR_REGISTRY_URI}
 
 # Pull Docker image from ECR.
-echo "Pulling Docker image from ECR: ${DOCKER_IMAGE_ECR_REGISTRY_URI}/${AWS_ECR_REPO_NAME}:latest"
+echo "Pulling Docker image from ECR: ${DOCKER_IMAGE_ECR_REGISTRY_URI}:latest"
 docker pull ${DOCKER_IMAGE_ECR_REGISTRY_URI}:latest
 
 # Run Docker image.

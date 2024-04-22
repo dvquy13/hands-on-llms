@@ -73,7 +73,7 @@ class AlpacaNewsBatchSource(StatelessSource):
             from_datetime=from_datetime, to_datetime=to_datetime, tickers=tickers
         )
 
-    def next(self):
+    def next_batch(self):
         """
         Retrieves the next batch of news articles.
 
@@ -86,7 +86,9 @@ class AlpacaNewsBatchSource(StatelessSource):
         if news is None or len(news) == 0:
             raise StopIteration()
 
-        return news
+        # Wrap the returned news (list) in a list to make it compatible with original author's code written in bytewax v0.16.2
+        # When we understand better we can change this temporary solution.
+        return [news]
 
     def close(self):
         """

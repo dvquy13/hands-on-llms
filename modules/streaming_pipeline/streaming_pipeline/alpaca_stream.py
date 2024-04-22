@@ -68,14 +68,19 @@ class AlpacaNewsStreamSource(StatelessSource):
         self._alpaca_client.start()
         self._alpaca_client.subscribe()
 
-    def next(self):
+    def next_batch(self):
         """
-        Returns the next news item from the Alpaca API.
+        Returns the next batch of news items from the Alpaca API.
 
         Returns:
             dict: A dictionary containing the news item data.
         """
-        return self._alpaca_client.recv()
+        items = self._alpaca_client.recv()
+        if not isinstance(items, list):
+            items = [items]
+        # Wrap the returned news (list) in a list to make it compatible with original author's code written in bytewax v0.16.2
+        # When we understand better we can change this temporary solution.
+        return [items]
 
     def close(self):
         """

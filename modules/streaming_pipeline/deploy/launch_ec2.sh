@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Source the environment variables if .env file exists
+if [ -f ".env" ]; then
+    source .env
+else
+    echo ".env file does not exist."
+fi
+
+# Run the script in non-interactive mode
+export AWS_PAGER=""
+
 # Get the default VPC ID
 DEFAULT_VPC_ID=$(aws ec2 describe-vpcs --query 'Vpcs[?IsDefault==`true`].VpcId | [0]' --output text)
 
@@ -7,7 +17,13 @@ DEFAULT_VPC_ID=$(aws ec2 describe-vpcs --query 'Vpcs[?IsDefault==`true`].VpcId |
 DEFAULT_SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=vpc-id,Values=$DEFAULT_VPC_ID" --query 'Subnets[0].SubnetId' --output text)
 
 # Define EC2 AMI Image ID
-AMI_IMAGE="ami-04e601abe3e1a910f"
+# Below AMI used by author, but I can not find info about this image id so comment out
+# AMI_IMAGE="ami-04e601abe3e1a910f"
+
+# Since the user-data-template.sh file assumes an Ubuntu image, we choose a corresponding Ubuntu AMI Image by going to EC2 Console > Launch Instance
+# Image description: Canonical, Ubuntu, 22.04 LTS, amd64 jammy image build on 2024-03-01
+# Note that the AMI IMAGE Id is tied to region ap-southeast-1
+AMI_IMAGE="ami-06c4be2792f419b7b"
 
 # Define EC2 IAM Role variables
 ROLE_NAME="EC2_ECR_Access_Role"
@@ -53,7 +69,13 @@ aws ec2 authorize-security-group-ingress --group-id ${SECURITY_GROUP_ID} --proto
 KEY_NAME='AWSHandsOnLLmsKey'
 mkdir -p ~/.ssh
 
+# Create a pair of public and private to encrypt and decrypt data
 aws ec2 create-key-pair --key-name ${KEY_NAME} --query 'KeyMaterial' --output text >  ~/.ssh/${KEY_NAME}.pem
+
+# Copy the PEM file to deploy folder
+rm -f deploy/${KEY_NAME}.pem
+cp ~/.ssh/${KEY_NAME}.pem deploy/
+chmod 400 deploy/${KEY_NAME}.pem
 
 # Create EC2 instance.
 INSTANCE_ID=$(aws ec2 run-instances \
@@ -65,6 +87,7 @@ INSTANCE_ID=$(aws ec2 run-instances \
     --subnet-id ${DEFAULT_SUBNET_ID} \
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=streaming-pipeline-server}]' 'ResourceType=volume,Tags=[{Key=Name,Value=demo-server-disk}]' \
     --user-data "file://${USER_DATA_FILE}" \
+    --block-device-mappings 'DeviceName=/dev/sda1,Ebs={VolumeSize=16}' \
     --output text --query 'Instances[0].InstanceId')
 
 # Check if the instance ID was successfully captured

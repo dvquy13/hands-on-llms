@@ -8,8 +8,9 @@ endif
 
 install:
 	@echo "Installing streaming pipeline..."
-	
-	poetry env use $(shell which python3.10) && \
+
+	conda create --prefix ./.venv python=3.10 pip
+	poetry env use ./.venv/bin/python && \
 	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install
 
 install_dev: install
@@ -86,6 +87,9 @@ info_aws:
 undeploy_aws:
 	bash deploy/terminate_ec2.sh
 
+ssh_ec2:
+	chmod +x deploy/ssh_ec2.sh
+	bash deploy/ssh_ec2.sh
 
 ### PEP 8 ###
 # Be sure to install the dev dependencies first #

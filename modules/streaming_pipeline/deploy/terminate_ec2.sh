@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Run the script in non-interactive mode
+export AWS_PAGER=""
+
 echo "Deleting roles & policies..."
 aws iam detach-role-policy --role-name "EC2_ECR_Access_Role" --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
 aws iam remove-role-from-instance-profile --instance-profile-name "EC2_ECR_Access_Instance_Profile" --role-name "EC2_ECR_Access_Role"
