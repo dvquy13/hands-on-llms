@@ -47,7 +47,7 @@ class FinancialBot:
         llm_model_id: str = constants.LLM_MODEL_ID,
         llm_qlora_model_id: str = constants.LLM_QLORA_CHECKPOINT,
         llm_template_name: str = constants.TEMPLATE_NAME,
-        llm_inference_max_new_tokens: int = constants.LLM_INFERNECE_MAX_NEW_TOKENS,
+        llm_inference_max_new_tokens: int = constants.LLM_INFERENCE_MAX_NEW_TOKENS,
         llm_inference_temperature: float = constants.LLM_INFERENCE_TEMPERATURE,
         vector_collection_name: str = constants.VECTOR_DB_OUTPUT_COLLECTION_NAME,
         vector_db_search_topk: int = constants.VECTOR_DB_SEARCH_TOPK,

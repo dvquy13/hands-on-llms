@@ -1,6 +1,7 @@
 import logging
 import os
 import subprocess
+import math
 from typing import Callable, Dict, List
 
 import psutil
@@ -28,8 +29,33 @@ def log_available_gpu_memory():
             memory_info = str(memory_info).split("\\")[0][2:]
 
             logger.info(f"GPU {i} memory available: {memory_info} MiB")
+    elif torch.backends.mps.is_available():
+        from torch import mps
+
+        # Ref: https://pytorch.org/docs/2.0/mps.html?highlight=mps#module-torch.mps
+        logger.info(f"{convert_size(mps.driver_allocated_memory())=}")
+        logger.info(f"{convert_size(mps.current_allocated_memory())=}")
     else:
         logger.info("No GPUs available")
+
+
+def get_torch_device():
+    if torch.cuda.is_available():
+        return "cuda:0"
+    # if torch.backends.mps.is_available():
+    #     return "mps"
+    return "cpu"
+
+
+def get_device_map():
+    # Currently HuggingFace model seems to not yet support Apple Silicon
+    device_map = (
+        "auto"
+        # if (torch.backends.mps.is_available() or torch.cuda.is_available())
+        if torch.cuda.is_available()
+        else "cpu"
+    )
+    return device_map
 
 
 def log_available_ram():
@@ -104,3 +130,13 @@ class MockedPipeline:
         result = self.f(prompt)
 
         return [{"generated_text": f"{prompt}{result}"}]
+
+
+def convert_size(size_bytes):
+    if size_bytes == 0:
+        return "0B"
+    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+    i = int(math.floor(math.log(size_bytes, 1024)))
+    p = math.pow(1024, i)
+    s = round(size_bytes / p, 2)
+    return "%s %s" % (s, size_name[i])

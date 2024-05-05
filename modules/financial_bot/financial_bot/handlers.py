@@ -23,7 +23,7 @@ class CometLLMMonitoringHandler(BaseCallbackHandler):
         project_name: str = None,
         llm_model_id: str = constants.LLM_MODEL_ID,
         llm_qlora_model_id: str = constants.LLM_QLORA_CHECKPOINT,
-        llm_inference_max_new_tokens: int = constants.LLM_INFERNECE_MAX_NEW_TOKENS,
+        llm_inference_max_new_tokens: int = constants.LLM_INFERENCE_MAX_NEW_TOKENS,
         llm_inference_temperature: float = constants.LLM_INFERENCE_TEMPERATURE,
     ):
         self._project_name = project_name

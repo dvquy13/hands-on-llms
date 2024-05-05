@@ -3,9 +3,9 @@
 install:
 	@echo "Installing financial bot..."
 	
-	poetry env use $(shell which python3.10) && \
-	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install && \
-	poetry run pip install torch==2.0.1
+	conda create --prefix ./.venv python=3.10 pip
+	poetry env use ./.venv/bin/python && \
+	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install
 
 install_dev: install
 	PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring poetry install --only dev

@@ -188,3 +188,6 @@ gradio_cached_examples
 trust_policy.json
 
 **.pem
+
+# This offload folder is used when HuggingFace needs to load a very big model into mem
+**/offload*/

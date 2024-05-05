@@ -5,6 +5,8 @@ from typing import List, Tuple
 import fire
 from beam import App, Image, Runtime, Volume, VolumeType
 
+from financial_bot import utils
+
 logger = logging.getLogger(__name__)
 
 
@@ -179,10 +181,14 @@ def run_local(
         str: A string containing the bot's response to the user's question.
     """
 
+    embedding_model_device = utils.get_torch_device()
+
     if debug is True:
         bot = load_bot_dev(model_cache_dir=None)
     else:
-        bot = load_bot(model_cache_dir=None)
+        bot = load_bot(
+            model_cache_dir=None, embedding_model_device=embedding_model_device
+        )
 
     inputs = {
         "about_me": about_me,

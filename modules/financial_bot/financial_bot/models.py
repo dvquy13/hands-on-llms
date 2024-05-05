@@ -18,6 +18,7 @@ from transformers import (
 )
 
 from financial_bot import constants
+from financial_bot import utils
 from financial_bot.utils import MockedPipeline
 
 logger = logging.getLogger(__name__)
@@ -104,7 +105,7 @@ class StopOnTokens(StoppingCriteria):
 def build_huggingface_pipeline(
     llm_model_id: str,
     llm_lora_model_id: str,
-    max_new_tokens: int = constants.LLM_INFERNECE_MAX_NEW_TOKENS,
+    max_new_tokens: int = constants.LLM_INFERENCE_MAX_NEW_TOKENS,
     temperature: float = constants.LLM_INFERENCE_TEMPERATURE,
     gradient_checkpointing: bool = False,
     use_streamer: bool = False,
@@ -205,7 +206,7 @@ def build_qlora_model(
         revision="main",
         quantization_config=bnb_config,
         load_in_4bit=True,
-        device_map="auto",
+        device_map=utils.get_device_map(),
         trust_remote_code=False,
         cache_dir=str(cache_dir) if cache_dir else None,
     )
@@ -241,7 +242,10 @@ def build_qlora_model(
         {lora_config.base_model_name_or_path} != {pretrained_model_name_or_path}"
 
         logger.info(f"Loading Peft Model from: {peft_pretrained_model_name_or_path}")
-        model = PeftModel.from_pretrained(model, peft_pretrained_model_name_or_path)
+        model = PeftModel.from_pretrained(
+            model,
+            peft_pretrained_model_name_or_path,
+        )
     else:
         lora_config = LoraConfig(
             lora_alpha=16,
